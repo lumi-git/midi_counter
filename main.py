@@ -1,9 +1,22 @@
-import mido, time, threading, keyboard
+import mido, time, threading, keyboard, yaml
 
+def load_config(file_path):
+    with open(file_path, 'r') as file:
+        try:
+            config = yaml.safe_load(file)
+            return config
+        except yaml.YAMLError as e:
+            print(f"Error loading YAML file: {e}")
+            return None
+        
 class app:
     def __init__(self):
+        self.config = load_config('config.yml')
         self.lock = threading.Lock()
         self.notes = []
+
+    def getConfig(self):
+        return self.config
 
     def addNote(self, msg):
         with self.lock:
@@ -19,7 +32,7 @@ class app:
 
 def initMidiThread(app):
     print("Midi Thread Started")
-    with mido.open_input('P-Series 0') as inport:
+    with mido.open_input(app.getConfig()["keyboard-serial-port"]) as inport:
         for msg in inport:
             app.addNote(msg)
 

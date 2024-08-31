@@ -1,4 +1,6 @@
 mido
+python-rtmidi
 time
 threading
 keyboard
+pyyaml
